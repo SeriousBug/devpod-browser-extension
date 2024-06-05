@@ -8,6 +8,8 @@ import { EError, EShadowError } from "@lib/utils/error";
 import { DevPodLogoIcon } from "@src/icons/devpod";
 import { StrictMode } from "react";
 import { ButtonLink } from "@lib/components/Button";
+import { runtime } from "webextension-polyfill";
+import { UpdateMessage } from "@lib/utils/messages";
 
 type PortalProps = { portal: HTMLElement | DocumentFragment };
 
@@ -46,7 +48,13 @@ export function Control({ portal }: PortalProps) {
     <StrictMode>
       <div className="flex justify-center items-center">
         <ErrorBoundaryProvider>
-          <ButtonLink href={getDevPodUrl()} color="primary" {...bindTarget}>
+          <ButtonLink
+            rel="noreferrer"
+            target="_blank"
+            href={getDevPodUrl()}
+            color="primary"
+            {...bindTarget}
+          >
             <DevPodLogoIcon
               aria-label=""
               className="w-6 h-6 text-primary-contrast"
@@ -84,14 +92,11 @@ function attachShadow<E extends Element = Element>(target: E | null) {
   const shadowTarget = document.createElement("div");
   target.appendChild(shadowTarget);
   const shadow = shadowTarget.attachShadow({ mode: "closed" });
-  const rootContainer = document.createElement("div");
-  shadow.appendChild(rootContainer);
   attachStyles(shadow);
-  return shadow;
+  return { shadow, target: shadowTarget };
 }
 
 const MAX_INIT_ATTEMPTS = 12;
-let isInitialized = false;
 
 function findDOMNodeByContent(content: string) {
   for (const node of document.querySelectorAll("button")) {
@@ -107,19 +112,41 @@ function findDOMNodeByContent(content: string) {
   });
 }
 
+let buttonContainer: HTMLDivElement | null = null;
+
 function init(attempts: number = 0) {
-  if (isInitialized || attempts > MAX_INIT_ATTEMPTS) return;
+  if (attempts > MAX_INIT_ATTEMPTS) {
+    // Too many attempts, aborting
+    return;
+  }
+  if (document.contains(buttonContainer)) {
+    // ALready initialized
+    return;
+  }
   try {
     const buttonTarget = findDOMNodeByContent("Code")?.parentElement;
-    const rootContainer = attachShadow(buttonTarget);
+    const { shadow: rootContainer, target: rootContainerTarget } =
+      attachShadow(buttonTarget);
+    buttonContainer = rootContainerTarget;
     const root = createRoot(rootContainer);
-    const portalContainer = attachShadow(document.body);
+    const { shadow: portalContainer } = attachShadow(document.body);
     root.render(<Control portal={portalContainer} />);
-    isInitialized = true;
   } catch (error) {
+    console.debug("Initialization failed", error);
     // 10ms, 20ms, 40ms, 80ms, 160ms, 320ms, 640ms, 1280ms, 2560ms, 5120ms, 10240ms, 20480ms
     setTimeout(() => init(attempts + 1), Math.pow(2, attempts) * 10);
   }
 }
 
+console.debug("Initializing DevPod button");
 init();
+runtime.onMessage.addListener((message) => {
+  UpdateMessage.safeParseAsync(message).then(async (result) => {
+    if (!result.success) return;
+    const message = result.data;
+    console.debug(`Received message ${message.type}`);
+    if (message.type === "devpod-update") {
+      init();
+    }
+  });
+});

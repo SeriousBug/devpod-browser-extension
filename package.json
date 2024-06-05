@@ -26,8 +26,7 @@
     "react-error-boundary": "^4.0.13",
     "swr": "^2.2.5",
     "tailwindcss": "^3.4.3",
-    "ulidx": "^2.3.0",
-    "yup": "^1.4.0"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
