@@ -2,10 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
 import path from "path";
+import zipPack from "vite-plugin-zip-pack";
+
+const pkg = readJsonFile("package.json");
 
 function generateManifest() {
   const manifest = readJsonFile("src/manifest.json");
-  const pkg = readJsonFile("package.json");
   return {
     name: pkg.name,
     description: pkg.description,
@@ -29,6 +31,10 @@ export default defineConfig({
     webExtension({
       manifest: generateManifest,
       disableAutoLaunch: false,
+    }),
+    zipPack({
+      outDir: ".",
+      outFileName: `dist-${pkg.version}.zip`,
     }),
   ],
 });
