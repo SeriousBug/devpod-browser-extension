@@ -1,4 +1,6 @@
 {
+  "name": "Clone with DevPod",
+  "description": "Clone a repository with DevPod in one click! Adds DevPod buttons to Github repositories and pull requests.",
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 2,
   "icons": {
@@ -21,7 +23,7 @@
   "permissions": ["activeTab", "webNavigation"],
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "matches": ["http://github.com/*", "https://github.com/*"],
       "js": ["src/pages/Content.tsx"]
     }
   ]
