@@ -15,6 +15,17 @@ type PortalProps = { portal: HTMLElement | DocumentFragment };
 
 function getDevPodUrl() {
   try {
+    let branch;
+    // https://github.com/SeriousBug/selidor/pull/6
+    if (
+      /[/](?<repo>[^/]+[/][^/]+)([/]?pull[/](\d+))?/.test(
+        window.location.pathname,
+      )
+    ) {
+      // Pull request
+      branch = document.querySelector(".commit-ref.head-ref")?.textContent;
+    }
+
     const results =
       /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/.exec(
         window.location.pathname,
@@ -25,13 +36,18 @@ function getDevPodUrl() {
         data: { url: window.location.href },
       });
     }
-    const { repo, branch } = results;
+    const { repo } = results;
+    if (!branch) {
+      branch = results.branch as string | undefined;
+    }
+
     if (!repo) {
       throw new EError({
         message: "Repository not found in URL",
         data: { url: window.location.href, repo, branch },
       });
     }
+
     const branchSuffix = branch ? `@${branch}` : "";
     return `https://devpod.sh/open#https://github.com/${repo}${branchSuffix}`;
   } catch (error) {
