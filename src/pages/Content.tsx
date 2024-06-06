@@ -121,11 +121,6 @@ function findDOMNodeByContent(content: string) {
       return node;
     }
   }
-
-  throw new EShadowError({
-    message: "DOM node not found",
-    data: { selector: { content } },
-  });
 }
 
 let buttonContainer: HTMLDivElement | null = null;
@@ -140,7 +135,9 @@ function init(attempts: number = 0) {
     return;
   }
   try {
-    const buttonTarget = findDOMNodeByContent("Code")?.parentElement;
+    const buttonTarget =
+      findDOMNodeByContent("Code")?.parentElement ??
+      document.querySelector(".gh-header-actions");
     const { shadow: rootContainer, target: rootContainerTarget } =
       attachShadow(buttonTarget);
     buttonContainer = rootContainerTarget;
