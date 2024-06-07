@@ -1,7 +1,7 @@
 import { WithPartial } from "./WithPartial";
 import { safeStringify } from "./safeStringify";
 
-type EErrorOptions<T = unknown> = {
+export type EErrorOptions<T = unknown> = {
   /** Human readable message, may be displayed to end users. */
   message: string;
   /** Any data to be included with the error. */
@@ -12,6 +12,9 @@ type EErrorOptions<T = unknown> = {
 
 export class EError<T = unknown> extends Error {
   private _data?: T;
+  public get data(): Readonly<T> | undefined {
+    return this._data;
+  }
 
   constructor({ message, data, cause }: EErrorOptions<T>) {
     super(message, { cause });
@@ -86,5 +89,18 @@ export class EShadowError extends EError<EShadowErrorData> {
   }: WithPartial<EErrorOptions<EShadowErrorData>, "message">) {
     super({ message, data });
     this.name = "EShadowError";
+  }
+}
+
+type ENoIntegrationErrorData = {
+  url: string;
+};
+export class ENoIntegrationError extends EError<ENoIntegrationErrorData> {
+  constructor({
+    message = "No integration found for this site.",
+    data,
+  }: WithPartial<EErrorOptions<ENoIntegrationErrorData>, "message">) {
+    super({ message, data });
+    this.name = "ENoIntegrationError";
   }
 }

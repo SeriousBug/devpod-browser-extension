@@ -4,48 +4,37 @@ import { createPortal } from "react-dom";
 import { useTooltip } from "@lib/hooks/useTooltip";
 import { ErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";
 import { clsx } from "@lib/utils/clsx";
-import { EError, EShadowError } from "@lib/utils/error";
+import { ENoIntegrationError, EShadowError } from "@lib/utils/error";
 import { DevPodLogoIcon } from "@src/icons/devpod";
 import { StrictMode } from "react";
 import { ButtonLink } from "@lib/components/Button";
 import { runtime } from "webextension-polyfill";
 import { UpdateMessage } from "@lib/utils/messages";
+import { getSupportedIntegration } from "@lib/integrations";
+import { EIntegrationParseError } from "@lib/integrations/error";
 
 type PortalProps = { portal: HTMLElement | DocumentFragment };
 
 function getDevPodUrl() {
+  const url = window.location.href;
   try {
+    const integration = getSupportedIntegration(url);
+    if (!integration) {
+      throw new ENoIntegrationError({ data: { url } });
+    }
+    const repo = integration.getRepo({ url, document });
     let branch;
-    // https://github.com/SeriousBug/selidor/pull/6
-    if (
-      /[/](?<repo>[^/]+[/][^/]+)([/]?pull[/](\d+))?/.test(
-        window.location.pathname,
-      )
-    ) {
-      // Pull request
-      branch = document.querySelector(".commit-ref.head-ref")?.textContent;
-    }
-
-    const results =
-      /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/.exec(
-        window.location.pathname,
-      )?.groups;
-    if (!results) {
-      throw new EError({
-        message: "Unable to extract repository and branch from URL",
-        data: { url: window.location.href },
-      });
-    }
-    const { repo } = results;
-    if (!branch) {
-      branch = results.branch as string | undefined;
-    }
-
-    if (!repo) {
-      throw new EError({
-        message: "Repository not found in URL",
-        data: { url: window.location.href, repo, branch },
-      });
+    try {
+      branch = integration.getBranch({ url, document });
+    } catch (error) {
+      if (
+        error instanceof EIntegrationParseError &&
+        error.data?.cause === "no match"
+      ) {
+        // We're just not on any branch, that's fine. DevPod will automatically check out the default branch.
+      } else {
+        throw error;
+      }
     }
 
     const branchSuffix = branch ? `@${branch}` : "";
@@ -114,15 +103,6 @@ function attachShadow<E extends Element = Element>(target: E | null) {
 
 const MAX_INIT_ATTEMPTS = 12;
 
-function findDOMNodeByContent(content: string) {
-  for (const node of document.querySelectorAll("button")) {
-    if (node.textContent?.includes(content)) {
-      console.debug("Found node", node);
-      return node;
-    }
-  }
-}
-
 let buttonContainer: HTMLDivElement | null = null;
 
 function init(attempts: number = 0) {
@@ -135,9 +115,12 @@ function init(attempts: number = 0) {
     return;
   }
   try {
-    const buttonTarget =
-      findDOMNodeByContent("Code")?.parentElement ??
-      document.querySelector(".gh-header-actions");
+    const integration = getSupportedIntegration(window.location.href);
+    if (!integration) {
+      throw new ENoIntegrationError({ data: { url: window.location.href } });
+    }
+
+    const buttonTarget = integration.getButtonTarget(document);
     const { shadow: rootContainer, target: rootContainerTarget } =
       attachShadow(buttonTarget);
     buttonContainer = rootContainerTarget;
@@ -145,7 +128,11 @@ function init(attempts: number = 0) {
     const { shadow: portalContainer } = attachShadow(document.body);
     root.render(<Control portal={portalContainer} />);
   } catch (error) {
-    console.debug("Initialization failed", error);
+    if (error instanceof ENoIntegrationError) {
+      // Ignore, expected error when the site is not supported.
+    } else {
+      console.info("Initialization failed", { attempts, error });
+    }
     // 10ms, 20ms, 40ms, 80ms, 160ms, 320ms, 640ms, 1280ms, 2560ms, 5120ms, 10240ms, 20480ms
     setTimeout(() => init(attempts + 1), Math.pow(2, attempts) * 10);
   }
