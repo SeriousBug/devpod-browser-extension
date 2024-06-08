@@ -14,10 +14,11 @@ WIP
 - Adds a DevPod button on Github
   - Clone the main branch
   - Clone a specific branch
+  - Clone Github PRs
 
 ### Roadmap
 
-- [ ] Clone Github PRs
+- [ ] Action button support
 - [ ] Support more platforms
   - [ ] Gitea & Forgejo
   - [ ] GitLab

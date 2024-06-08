@@ -1,4 +1,4 @@
-import { isSupportedSite } from "@lib/utils/isSupportedSite";
+import { getSupportedIntegration } from "@lib/integrations";
 import { UpdateMessage } from "@lib/utils/messages";
 import browser from "webextension-polyfill";
 
@@ -7,8 +7,12 @@ browser.runtime.onInstalled.addListener((details) => {
 });
 
 browser.webNavigation.onHistoryStateUpdated.addListener((e) => {
-  if (isSupportedSite(e.url)) {
-    console.debug("Supported site:", e.url);
+  const integration = getSupportedIntegration(e.url);
+  if (integration) {
+    console.debug("Supported site:", {
+      url: e.url,
+      platform: integration.platform,
+    });
     try {
       browser.tabs.sendMessage(e.tabId, {
         type: "devpod-update",
