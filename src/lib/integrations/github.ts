@@ -1,14 +1,18 @@
 import { findDOMNodeByContent } from "@lib/utils/findDOMNodeByContent";
 import { Integration } from "./core";
-import { EIntegrationParseErrorData, EIntegrationTargetError } from "./error";
-import { EError, EErrorOptions } from "@lib/utils/error";
+import {
+  EIntegrationParseError,
+  EIntegrationParseErrorData,
+  EIntegrationTargetError,
+} from "./error";
+import { EErrorOptions } from "@lib/utils/error";
 import { WithPartial } from "@lib/utils/WithPartial";
 import _ from "lodash";
 
 type EGithubParseErrorData = EIntegrationParseErrorData & {
   integration: "github";
 };
-export class EGithubParseError extends EError<EGithubParseErrorData> {
+export class EGithubParseError extends EIntegrationParseError {
   constructor({
     message = "Unable to extract repository or branch from URL",
     data,
@@ -50,7 +54,7 @@ export const github: Integration = {
     if (!results) {
       throw new EGithubParseError({
         data: {
-          url: window.location.href,
+          url: url.toString(),
           integration: "github",
           cause: "no match",
           process: "repo",
@@ -61,7 +65,7 @@ export const github: Integration = {
     if (_.isEmpty(repo)) {
       throw new EGithubParseError({
         data: {
-          url: window.location.href,
+          url: url.toString(),
           integration: "github",
           cause: "empty match",
           process: "repo",
@@ -76,7 +80,7 @@ export const github: Integration = {
       if (!branchContainer) {
         throw new EGithubParseError({
           data: {
-            url: window.location.href,
+            url: url.toString(),
             integration: "github",
             cause: "no match",
             process: "branch",
@@ -87,7 +91,7 @@ export const github: Integration = {
       if (!branch || _.isEmpty(branch)) {
         throw new EGithubParseError({
           data: {
-            url: window.location.href,
+            url: url.toString(),
             integration: "github",
             cause: "empty match",
             process: "branch",
@@ -98,7 +102,7 @@ export const github: Integration = {
     } else {
       const results =
         /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/.exec(
-          window.location.pathname,
+          url.toString(),
         )?.groups;
       if (!results) {
         throw new EGithubParseError({
@@ -114,7 +118,7 @@ export const github: Integration = {
       if (_.isEmpty(branch)) {
         throw new EGithubParseError({
           data: {
-            url: window.location.href,
+            url: url.toString(),
             integration: "github",
             cause: "empty match",
             process: "branch",
