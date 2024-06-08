@@ -1,19 +1,29 @@
-import { ReactNode } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { EError } from "../utils/error";
 import { Modal } from "@lib/components/Modal";
 import { Button } from "@lib/components/Button";
 
 function FallbackRender({ error, resetErrorBoundary }: FallbackProps) {
-  const errorEncoded = EError.encode(error);
+  const { errorEncoded, message, serialized } = useMemo(() => {
+    return {
+      errorEncoded: EError.encode(error),
+      message: EError.message(error),
+      serialized: EError.stringify(error, 2),
+    };
+  }, [error]);
+  const onCopy = useCallback(() => {
+    navigator.clipboard.writeText(errorEncoded);
+  }, [errorEncoded]);
 
   return (
     <Modal
+      key="error-boundary"
       isOpen
       onClose={resetErrorBoundary}
       className="text-text flex flex-col gap-4 max-w-[80vw] lg:max-w-2xl"
     >
-      <h2 className="font-bold text-xl">{EError.message(error)}</h2>
+      <h2 className="font-bold text-xl">{message}</h2>
       <p>
         Please send the following code along with a description of what you were
         trying to do when the error happened via email to{" "}
@@ -36,9 +46,7 @@ function FallbackRender({ error, resetErrorBoundary }: FallbackProps) {
         <Button
           className="absolute right-6 top-6"
           variant="solid"
-          onClick={() => {
-            navigator.clipboard.writeText(errorEncoded);
-          }}
+          onClick={onCopy}
         >
           Copy
         </Button>
@@ -47,13 +55,14 @@ function FallbackRender({ error, resetErrorBoundary }: FallbackProps) {
         <summary>What&apos;s in this?</summary>
         <p>
           This error code contains information to help us diagnose the problem.
-          It will include the URL of the current web page you are on, and
-          information about the state of the extension. It does not contain your
-          username, password, or any personal information. It does not give us
-          or anyone else access to your account. You can review the data below.
+          It will include an obfuscated address of the current web page you are
+          on, the version of the extension and browser, and the state of the
+          extension. It does not contain your username, password, or any
+          personal information. It does not give us or anyone else access to
+          your account. You can review the data below.
         </p>
         <pre className="bg-text bg-opacity-10 p-4 m-4 overflow-auto">
-          {JSON.stringify(EError.serialize(error), null, 2)}
+          {serialized}
         </pre>
       </details>
       <Button variant="outline" onClick={resetErrorBoundary}>

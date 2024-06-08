@@ -67,17 +67,6 @@ export function useStorage<T = unknown>({
     };
   });
 
-  if (!data && !error) {
-    return {
-      isLoading: true,
-      data: undefined,
-      setData,
-      error: undefined,
-      isValidating,
-      mutate,
-    };
-  }
-
   return {
     isLoading: false,
     data,

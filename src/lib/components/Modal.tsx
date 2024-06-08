@@ -1,23 +1,53 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { stopPropagation } from "@lib/utils/dom/stopPropagation";
 import { clsx } from "@lib/utils/clsx";
+import {
+  ModalKey,
+  useModalDismissed,
+} from "@lib/hooks/storage/useModalDismissed";
+import { ReactNode, Suspense } from "react";
+import { Button } from "./Button";
 
 const MODAL = "fixed left-0 top-0 bottom-0 right-0 z-20";
 
-export function Modal({
-  isOpen,
-  onClose,
-  children,
-  className,
-}: {
+type ModalDismissableProps = {
+  key: ModalKey;
+  allowDismiss: true;
+};
+type ModalNonDismissableProps = {
+  allowDismiss?: false;
+};
+
+type ModalProps = {
   isOpen: boolean;
   onClose?: () => void;
   children?: React.ReactNode;
   className?: string;
-}) {
+} & (ModalDismissableProps | ModalNonDismissableProps);
+
+function Modal(props: ModalProps): ReactNode {
+  // Hide the modal until we can figure out if it was dismissed or not.
+  return (
+    <Suspense fallback={null}>
+      <ModalInside {...props}></ModalInside>
+    </Suspense>
+  );
+}
+
+function ModalInside({
+  isOpen,
+  onClose,
+  className,
+  children,
+  ...props
+}: ModalProps): ReactNode {
+  const dismiss = useModalDismissed({
+    key: props.allowDismiss ? props.key : undefined,
+  });
+
   return (
     <AnimatePresence>
-      {isOpen ? (
+      {isOpen && !dismiss.isDismissed ? (
         <>
           <motion.div
             initial={{
@@ -43,6 +73,11 @@ export function Modal({
               className={clsx("bg-background p-4 rounded", className)}
             >
               {children}
+              {dismiss.dismissable ? (
+                <Button variant="link" onClick={dismiss.dismiss}>
+                  Never show this again
+                </Button>
+              ) : null}
             </div>
           </motion.div>
         </>
@@ -50,3 +85,5 @@ export function Modal({
     </AnimatePresence>
   );
 }
+
+export { Modal };

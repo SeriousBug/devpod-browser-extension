@@ -29,7 +29,7 @@ export class EError<T = unknown> extends Error {
     return error instanceof Error ? error.message : "An unknown error occurred";
   }
 
-  /** Convert an error into an object, recursively serializing causes as needed. */
+  /** Convert an error into a plain object, recursively going down causes as needed. */
   public static serialize(error: unknown): unknown {
     // Wrapping the recursion in this inner function to hide the recursion parameter
     function serializeRecurse(error: unknown, recursion: number): unknown {
@@ -41,39 +41,47 @@ export class EError<T = unknown> extends Error {
         error instanceof Error && recursion > 0 && error.cause
           ? serializeRecurse(error.cause, recursion - 1)
           : undefined;
-      const name = EError.name(error);
-      const message = EError.message(error);
+
+      const base = {
+        name: EError.name(error),
+        message: EError.message(error),
+        version: APP_VERSION,
+      };
 
       if (error instanceof EError) {
         return {
-          name,
-          message,
           data: error._data,
           stack: error.stack,
           cause,
+          ...base,
         };
       }
 
       if (error instanceof Error) {
         return {
-          name,
-          message,
           stack: error.stack,
           cause,
+          ...base,
         };
       }
 
       return {
-        name,
-        message,
         data: safeStringify(error),
+        ...base,
       };
     }
     return serializeRecurse(error, 10);
   }
 
+  /** Converts an error into a JSON formatted string. */
+  public static stringify(error: unknown, space?: string | number): string {
+    const text = safeStringify(this.serialize(error), space);
+    return text;
+  }
+
+  /** Converts an error into a base64 encoded JSON string. */
   public static encode(error: unknown): string {
-    return btoa(safeStringify(this.serialize(error)));
+    return btoa(this.stringify(error));
   }
 }
 

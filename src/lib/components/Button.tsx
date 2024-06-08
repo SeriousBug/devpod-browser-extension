@@ -3,7 +3,7 @@ import { HTMLMotionProps, motion } from "framer-motion";
 import { forwardRef } from "react";
 
 type ButtonStyleProps = {
-  variant?: "solid" | "outline";
+  variant?: "solid" | "outline" | "link";
   color?: "primary";
 };
 type ButtonProps = HTMLMotionProps<"button"> & ButtonStyleProps;
@@ -14,10 +14,13 @@ function colors({ variant = "solid", color = "primary" }: ButtonStyleProps) {
     const borderColor = (() => {
       switch (color) {
         case "primary":
-          return "border-primary text-text";
+          return "border-primary text-primary";
       }
     })();
     return clsx(borderColor, "border-thick");
+  }
+  if (variant === "link") {
+    return clsx("text-primary");
   }
 
   switch (color) {

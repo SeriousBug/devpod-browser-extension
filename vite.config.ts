@@ -38,4 +38,7 @@ export default defineConfig({
         outFileName: `dist-${pkg.version}.zip`,
       }),
   ],
+  define: {
+    APP_VERSION: JSON.stringify(pkg.version),
+  },
 });

@@ -4,9 +4,9 @@
  * use this for cases where the serialized data being gibberish is less of a
  * problem than this function throwing an error.
  */
-export function safeStringify(value: unknown): string {
+export function safeStringify(value: unknown, space?: string | number): string {
   try {
-    return JSON.stringify(value);
+    return JSON.stringify(value, undefined, space);
   } catch (error) {
     console.debug("safeStringify failed to stringify value", error);
     try {
