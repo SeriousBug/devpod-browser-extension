@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { useTooltip } from "@lib/hooks/useTooltip";
 import { ErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";
 import { clsx } from "@lib/utils/clsx";
-import { ENoIntegrationError, EShadowError } from "@lib/utils/error";
+import { EError, ENoIntegrationError, EShadowError } from "@lib/utils/error";
 import { DevPodLogoIcon } from "@src/icons/devpod";
 import { StrictMode } from "react";
 import { ButtonLink } from "@lib/components/Button";
@@ -28,11 +28,10 @@ function getDevPodUrl() {
       branch = integration.getBranch({ url, document });
     } catch (error) {
       if (
-        error instanceof EIntegrationParseError &&
-        error.data?.cause === "no match"
+        // "no match" errors are expected when we're on the main branch
+        !(error instanceof EIntegrationParseError) ||
+        error.data?.cause !== "no match"
       ) {
-        // We're just not on any branch, that's fine. DevPod will automatically check out the default branch.
-      } else {
         throw error;
       }
     }
@@ -40,7 +39,7 @@ function getDevPodUrl() {
     const branchSuffix = branch ? `@${branch}` : "";
     return `https://devpod.sh/open#https://github.com/${repo}${branchSuffix}`;
   } catch (error) {
-    console.error(error);
+    console.error(EError.serialize(error));
     throw error;
   }
 }
@@ -131,7 +130,10 @@ function init(attempts: number = 0) {
     if (error instanceof ENoIntegrationError) {
       // Ignore, expected error when the site is not supported.
     } else {
-      console.info("Initialization failed", { attempts, error });
+      console.info("Initialization failed", {
+        attempts,
+        error: EError.serialize(error),
+      });
     }
     // 10ms, 20ms, 40ms, 80ms, 160ms, 320ms, 640ms, 1280ms, 2560ms, 5120ms, 10240ms, 20480ms
     setTimeout(() => init(attempts + 1), Math.pow(2, attempts) * 10);
