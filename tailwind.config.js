@@ -6,12 +6,12 @@ module.exports = {
       spacing: {
         DEFAULT: "1rem",
       },
-    },
-    colors: {
-      primary: "#ba50ff",
-      "primary-contrast": "#fff",
-      text: "#000",
-      background: "#fff",
+      colors: {
+        primary: "#ba50ff",
+        "primary-contrast": "#fff",
+        text: "#000",
+        background: "#fff",
+      },
     },
     borderRadius: {
       DEFAULT: ".5rem",
