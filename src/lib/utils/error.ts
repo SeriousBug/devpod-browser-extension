@@ -30,7 +30,7 @@ export class EError<T = unknown> extends Error {
   }
 
   /** Convert an error into an object, recursively serializing causes as needed. */
-  private static serialize(error: unknown): unknown {
+  public static serialize(error: unknown): unknown {
     // Wrapping the recursion in this inner function to hide the recursion parameter
     function serializeRecurse(error: unknown, recursion: number): unknown {
       if (error === undefined || error === null) {
