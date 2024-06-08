@@ -32,9 +32,10 @@ export default defineConfig({
       manifest: generateManifest,
       disableAutoLaunch: false,
     }),
-    zipPack({
-      outDir: ".",
-      outFileName: `dist-${pkg.version}.zip`,
-    }),
+    process.env.NODE_ENV === "production" &&
+      zipPack({
+        outDir: ".",
+        outFileName: `dist-${pkg.version}.zip`,
+      }),
   ],
 });
