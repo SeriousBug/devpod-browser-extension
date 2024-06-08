@@ -1,4 +1,4 @@
-import { findDOMNodeByContent } from "@lib/utils/findDOMNodeByContent";
+import { WithPartial } from "@lib/utils/typeUtils/WithPartial";
 import { Integration } from "./core";
 import {
   EIntegrationParseError,
@@ -6,8 +6,8 @@ import {
   EIntegrationTargetError,
 } from "./error";
 import { EErrorOptions } from "@lib/utils/error";
-import { WithPartial } from "@lib/utils/WithPartial";
 import _ from "lodash";
+import { findDOMNodeByContent } from "@lib/utils/dom/findDOMNodeByContent";
 
 type EGithubParseErrorData = EIntegrationParseErrorData & {
   integration: "github";

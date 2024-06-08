@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import useSWR from "swr";
 
-type Key = "prompts";
+type Key = "modal-dismissed";
 
 type Listener = Parameters<
   typeof chrome.storage.local.onChanged.addListener

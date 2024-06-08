@@ -1,4 +1,4 @@
-import { WithPartial } from "./WithPartial";
+import { WithPartial } from "./typeUtils/WithPartial";
 import { safeStringify } from "./safeStringify";
 
 export type EErrorOptions<T = unknown> = {
@@ -73,22 +73,7 @@ export class EError<T = unknown> extends Error {
   }
 
   public static encode(error: unknown): string {
-    return Buffer.from(safeStringify(this.serialize(error))).toString(
-      "base64url",
-    );
-  }
-}
-
-type EShadowErrorData = {
-  selector: { content: string };
-};
-export class EShadowError extends EError<EShadowErrorData> {
-  constructor({
-    message = "open-devpod-browser-extension is unable to attach an element to the page.",
-    data,
-  }: WithPartial<EErrorOptions<EShadowErrorData>, "message">) {
-    super({ message, data });
-    this.name = "EShadowError";
+    return btoa(safeStringify(this.serialize(error)));
   }
 }
 

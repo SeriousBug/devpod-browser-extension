@@ -1,6 +1,6 @@
 import { EError, EErrorOptions } from "@lib/utils/error";
 import { IntegrationPlatform } from "./core";
-import { WithPartial } from "@lib/utils/WithPartial";
+import { WithPartial } from "@lib/utils/typeUtils/WithPartial";
 
 type EIntegrationTargetErrorData = {
   url: string;
