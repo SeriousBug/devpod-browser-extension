@@ -1,23 +1,10 @@
 import { createRoot } from "react-dom/client";
-import { ErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";
 import { EError, ENoIntegrationError } from "@lib/utils/error";
-import { StrictMode } from "react";
 import { runtime } from "webextension-polyfill";
 import { UpdateMessage } from "@lib/utils/messages";
 import { getSupportedIntegration } from "@lib/integrations";
-import { PortalProps } from "@lib/utils/dom/portal";
-import { CloneButton } from "./content/CloneButton";
 import { attachShadow } from "@lib/utils/dom/shadow";
-
-export function Control({ portal }: PortalProps) {
-  return (
-    <StrictMode>
-      <ErrorBoundaryProvider>
-        <CloneButton portal={portal} />
-      </ErrorBoundaryProvider>
-    </StrictMode>
-  );
-}
+import { CloneButton } from "./content/CloneButton";
 
 const MAX_INIT_ATTEMPTS = 12;
 
@@ -44,7 +31,7 @@ function init(attempts: number = 0) {
     buttonContainer = rootContainerTarget;
     const root = createRoot(rootContainer);
     const { shadow: portalContainer } = attachShadow(document.body);
-    root.render(<Control portal={portalContainer} />);
+    root.render(<CloneButton portal={portalContainer} />);
   } catch (error) {
     if (error instanceof ENoIntegrationError) {
       // Ignore, expected error when the site is not supported.

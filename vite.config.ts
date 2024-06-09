@@ -28,14 +28,19 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    webExtension({
-      manifest: generateManifest,
-      disableAutoLaunch: false,
-    }),
+    process.env.PREVIEW !== "false" &&
+      webExtension({
+        manifest: generateManifest,
+        disableAutoLaunch: false,
+      }),
     process.env.NODE_ENV === "production" &&
       zipPack({
         outDir: ".",
         outFileName: `dist-${pkg.version}.zip`,
       }),
   ],
+  define: {
+    APP_VERSION: JSON.stringify(pkg.version),
+    PREVIEW: JSON.stringify(process.env.PREVIEW !== '"false"'),
+  },
 });
