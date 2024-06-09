@@ -22,13 +22,13 @@ export class EGitLabParseError extends EIntegrationParseError {
 }
 
 function isPR(url: string | URL) {
-  return /[/][^/]+[/][^/]+[/]-[/]merge_requests[/].+/.test(url.toString());
+  return /[/][^/]+[/][^/]+[/]-[/]merge_requests[/].+/i.test(url.toString());
 }
 
 export const GitLab: Integration = {
   platform: "GitLab",
   supports(url: string | URL) {
-    return /^https?:[/][/]gitlab.com[/][^/]+[/][^/]+/.test(url.toString());
+    return /^https?:[/][/]gitlab.com[/][^/]+[/][^/]+/i.test(url.toString());
   },
   getButtonTarget(document: Document) {
     const node =
@@ -49,7 +49,7 @@ export const GitLab: Integration = {
   },
   getRepo({ url }) {
     const results =
-      /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/.exec(
+      /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
         url.toString(),
       )?.groups;
     if (!results) {
@@ -101,7 +101,7 @@ export const GitLab: Integration = {
       }
       return branch;
     } else {
-      const results = /[/][^/]+[/][^/]+[/]-[/]tree[/](?<branch>[^?]+)/.exec(
+      const results = /[/][^/]+[/][^/]+[/]-[/]tree[/](?<branch>[^?]+)/i.exec(
         url.toString(),
       )?.groups;
       if (!results) {

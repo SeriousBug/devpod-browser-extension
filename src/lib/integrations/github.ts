@@ -23,13 +23,13 @@ export class EGithubParseError extends EIntegrationParseError {
 }
 
 function isPR(url: string | URL) {
-  return /[/](?<repo>[^/]+[/][^/]+)([/]?pull[/](\d+))?/.test(url.toString());
+  return /[/](?<repo>[^/]+[/][^/]+)([/]?pull[/](\d+))?/i.test(url.toString());
 }
 
 export const Github: Integration = {
   platform: "Github",
   supports(url: string | URL) {
-    return /^https?:[/][/]Github.com[/][^/]+[/][^/]+/.test(url.toString());
+    return /^https?:[/][/]github.com[/][^/]+[/][^/]+/i.test(url.toString());
   },
   getButtonTarget(document: Document) {
     const node =
@@ -48,7 +48,7 @@ export const Github: Integration = {
   },
   getRepo({ url }) {
     const results =
-      /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/.exec(
+      /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
         url.toString(),
       )?.groups;
     if (!results) {
@@ -101,7 +101,7 @@ export const Github: Integration = {
       return branch;
     } else {
       const results =
-        /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))/.exec(
+        /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))/i.exec(
           url.toString(),
         )?.groups;
       if (!results) {
