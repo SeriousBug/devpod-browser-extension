@@ -5,7 +5,9 @@ import { EIntegrationParseError } from "@lib/integrations/error";
 import { clsx } from "@lib/utils/clsx";
 import { PortalProps } from "@lib/utils/dom/portal";
 import { EError, ENoIntegrationError } from "@lib/utils/error";
+import { ErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";
 import { DevPodLogoIcon } from "@src/icons/devpod";
+import { StrictMode } from "react";
 import { createPortal } from "react-dom";
 
 function getDevPodUrl(url: string) {
@@ -36,7 +38,7 @@ function getDevPodUrl(url: string) {
   }
 }
 
-export function CloneButton({ portal }: PortalProps) {
+function CloneButtonInner({ portal }: PortalProps) {
   const { isHovering, bindTarget, bindTooltip } =
     useTooltip<HTMLAnchorElement>();
 
@@ -70,5 +72,15 @@ export function CloneButton({ portal }: PortalProps) {
         portal,
       )}
     </div>
+  );
+}
+
+export function CloneButton({ portal }: PortalProps) {
+  return (
+    <StrictMode>
+      <ErrorBoundaryProvider>
+        <CloneButtonInner portal={portal} />
+      </ErrorBoundaryProvider>
+    </StrictMode>
   );
 }
