@@ -5,18 +5,30 @@ import { UpdateMessage } from "@lib/utils/messages";
 import { getSupportedIntegration } from "@lib/integrations";
 import { attachShadow } from "@lib/utils/dom/shadow";
 import { CloneButton } from "./content/CloneButton";
+import _ from "lodash";
 
 const MAX_INIT_ATTEMPTS = 12;
 
 let buttonContainer: HTMLDivElement | null = null;
+
+const debouncedInit = _.debounce(() => init(), 250);
+
+function isElementVisible(el: HTMLElement) {
+  return el.offsetWidth > 0 && el.offsetHeight > 0;
+}
 
 function init(attempts: number = 0) {
   if (attempts > MAX_INIT_ATTEMPTS) {
     // Too many attempts, aborting
     return;
   }
-  if (document.contains(buttonContainer)) {
-    // ALready initialized
+  if (buttonContainer && document.contains(buttonContainer)) {
+    // Already initialized
+    if (!isElementVisible(buttonContainer)) {
+      // Button is no longer visible, we need to try to place it again
+      buttonContainer?.remove();
+      debouncedInit();
+    }
     return;
   }
   try {
@@ -40,6 +52,15 @@ function init(attempts: number = 0) {
         portal={portalContainer}
       />,
     );
+
+    // Try to catch if the button gets removed dynamically and reinitialize
+    const observer = new MutationObserver(debouncedInit);
+    observer.observe(buttonTarget, {
+      childList: true,
+      subtree: true,
+    });
+    window.removeEventListener("focus", debouncedInit);
+    window.addEventListener("focus", debouncedInit);
   } catch (error) {
     if (error instanceof ENoIntegrationError) {
       // Ignore, expected error when the site is not supported.
