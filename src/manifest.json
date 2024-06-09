@@ -23,7 +23,7 @@
   "permissions": ["webNavigation", "storage"],
   "content_scripts": [
     {
-      "matches": ["http://github.com/*", "https://github.com/*"],
+      "matches": ["https://github.com/*", "https://gitlab.com/*"],
       "js": ["src/pages/Content.tsx"]
     }
   ]
