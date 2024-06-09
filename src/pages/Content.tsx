@@ -31,10 +31,19 @@ function init(attempts: number = 0) {
     buttonContainer = rootContainerTarget;
     const root = createRoot(rootContainer);
     const { shadow: portalContainer } = attachShadow(document.body);
-    root.render(<CloneButton portal={portalContainer} />);
+    root.render(
+      <CloneButton
+        className={integration.buttonClassOverride?.({
+          url: window.location.href,
+          document,
+        })}
+        portal={portalContainer}
+      />,
+    );
   } catch (error) {
     if (error instanceof ENoIntegrationError) {
       // Ignore, expected error when the site is not supported.
+      console.debug("No integration found for this site");
     } else {
       console.info("Initialization failed", {
         attempts,

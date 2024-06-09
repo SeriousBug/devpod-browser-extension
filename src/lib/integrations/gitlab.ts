@@ -7,39 +7,40 @@ import {
 } from "./error";
 import { EErrorOptions } from "@lib/utils/error";
 import _ from "lodash";
-import { findDOMNodeByContent } from "@lib/utils/dom/findDOMNodeByContent";
 
-type EGithubParseErrorData = EIntegrationParseErrorData & {
-  integration: "Github";
+type EGitLabParseErrorData = EIntegrationParseErrorData & {
+  integration: "GitLab";
 };
-export class EGithubParseError extends EIntegrationParseError {
+export class EGitLabParseError extends EIntegrationParseError {
   constructor({
     message = "Unable to extract repository or branch from URL",
     data,
-  }: WithPartial<EErrorOptions<EGithubParseErrorData>, "message">) {
+  }: WithPartial<EErrorOptions<EGitLabParseErrorData>, "message">) {
     super({ message, data });
-    this.name = "EGithubParseErrorData";
+    this.name = "EGitLabParseErrorData";
   }
 }
 
 function isPR(url: string | URL) {
-  return /[/](?<repo>[^/]+[/][^/]+)([/]?pull[/](\d+))?/.test(url.toString());
+  return /[/][^/]+[/][^/]+[/]-[/]merge_requests[/].+/.test(url.toString());
 }
 
-export const Github: Integration = {
-  platform: "Github",
+export const GitLab: Integration = {
+  platform: "GitLab",
   supports(url: string | URL) {
-    return /^https?:[/][/]Github.com[/][^/]+[/][^/]+/.test(url.toString());
+    return /^https?:[/][/]gitlab.com[/][^/]+[/][^/]+/.test(url.toString());
   },
   getButtonTarget(document: Document) {
     const node =
-      findDOMNodeByContent("Code")?.parentElement ??
-      document.querySelector<HTMLElement>(".gh-header-actions");
+      document.querySelector<HTMLElement>(".project-code-holder")
+        ?.parentElement ??
+      document.querySelector<HTMLElement>(".tree-controls > div") ??
+      document.querySelector<HTMLElement>(".detail-page-header-actions");
     if (!node) {
       throw new EIntegrationTargetError({
         message: "Unable to find button target",
         data: {
-          integration: "Github",
+          integration: "GitLab",
           url: window.location.href,
         },
       });
@@ -52,10 +53,10 @@ export const Github: Integration = {
         url.toString(),
       )?.groups;
     if (!results) {
-      throw new EGithubParseError({
+      throw new EGitLabParseError({
         data: {
           url: url.toString(),
-          integration: "Github",
+          integration: "GitLab",
           cause: "no match",
           process: "repo",
         },
@@ -63,10 +64,10 @@ export const Github: Integration = {
     }
     const { repo } = results;
     if (_.isEmpty(repo)) {
-      throw new EGithubParseError({
+      throw new EGitLabParseError({
         data: {
           url: url.toString(),
-          integration: "Github",
+          integration: "GitLab",
           cause: "empty match",
           process: "repo",
         },
@@ -76,12 +77,12 @@ export const Github: Integration = {
   },
   getBranch({ url, document }) {
     if (isPR(url)) {
-      const branchContainer = document.querySelector(".commit-ref.head-ref");
+      const branchContainer = document.querySelector(".ref-container");
       if (!branchContainer) {
-        throw new EGithubParseError({
+        throw new EGitLabParseError({
           data: {
             url: url.toString(),
-            integration: "Github",
+            integration: "GitLab",
             cause: "no match",
             process: "branch",
           },
@@ -89,10 +90,10 @@ export const Github: Integration = {
       }
       const branch = branchContainer.textContent;
       if (!branch || _.isEmpty(branch)) {
-        throw new EGithubParseError({
+        throw new EGitLabParseError({
           data: {
             url: url.toString(),
-            integration: "Github",
+            integration: "GitLab",
             cause: "empty match",
             process: "branch",
           },
@@ -100,15 +101,14 @@ export const Github: Integration = {
       }
       return branch;
     } else {
-      const results =
-        /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))/.exec(
-          url.toString(),
-        )?.groups;
+      const results = /[/][^/]+[/][^/]+[/]-[/]tree[/](?<branch>[^?]+)/.exec(
+        url.toString(),
+      )?.groups;
       if (!results) {
-        throw new EGithubParseError({
+        throw new EGitLabParseError({
           data: {
             url: window.location.href,
-            integration: "Github",
+            integration: "GitLab",
             cause: "no match",
             process: "branch",
           },
@@ -116,16 +116,21 @@ export const Github: Integration = {
       }
       const { branch } = results;
       if (_.isEmpty(branch)) {
-        throw new EGithubParseError({
+        throw new EGitLabParseError({
           data: {
             url: url.toString(),
-            integration: "Github",
+            integration: "GitLab",
             cause: "empty match",
             process: "branch",
           },
         });
       }
       return branch;
+    }
+  },
+  buttonClassOverride({ url }) {
+    if (isPR(url)) {
+      return "ml-2";
     }
   },
 };

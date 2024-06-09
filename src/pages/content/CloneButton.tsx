@@ -38,7 +38,10 @@ function getDevPodUrl(url: string) {
   }
 }
 
-function CloneButtonInner({ portal }: PortalProps) {
+function CloneButtonInner({
+  portal,
+  className,
+}: PortalProps & { className?: string }) {
   const { isHovering, bindTarget, bindTooltip } =
     useTooltip<HTMLAnchorElement>();
 
@@ -52,6 +55,7 @@ function CloneButtonInner({ portal }: PortalProps) {
         href={link}
         color="primary"
         {...bindTarget}
+        className={className}
       >
         <DevPodLogoIcon
           aria-label=""
@@ -75,11 +79,14 @@ function CloneButtonInner({ portal }: PortalProps) {
   );
 }
 
-export function CloneButton({ portal }: PortalProps) {
+export function CloneButton({
+  portal,
+  className,
+}: PortalProps & { className?: string }) {
   return (
     <StrictMode>
       <ErrorBoundaryProvider>
-        <CloneButtonInner portal={portal} />
+        <CloneButtonInner className={className} portal={portal} />
       </ErrorBoundaryProvider>
     </StrictMode>
   );
