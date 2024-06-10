@@ -1,15 +1,6 @@
-import { attachShadow } from "@lib/utils/dom/shadow";
 import { createRoot } from "react-dom/client";
-import { CloneButton } from "./content/CloneButton";
+import "../tailwind.css";
+import { Preview } from "./PreviewContent";
 
-function init() {
-  const { shadow: rootContainer } = attachShadow(
-    document.getElementById("root"),
-  );
-  const { shadow: portalContainer } = attachShadow(document.body);
-  const root = createRoot(rootContainer);
-
-  root.render(<CloneButton portal={portalContainer} />);
-}
-
-init();
+const root = createRoot(document.body);
+root.render(<Preview />);
