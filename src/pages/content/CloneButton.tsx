@@ -6,7 +6,7 @@ import { clsx } from "@lib/utils/clsx";
 import { PortalProps } from "@lib/utils/dom/portal";
 import { EError, ENoIntegrationError } from "@lib/utils/error";
 import { ErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";
-import { DevPodLogoIcon } from "@src/icons/devpod";
+import { DevPodLogo } from "@src/icons/devpod";
 import { StrictMode } from "react";
 import { createPortal } from "react-dom";
 
@@ -57,10 +57,7 @@ function CloneButtonInner({
         {...bindTarget}
         className={className}
       >
-        <DevPodLogoIcon
-          aria-label=""
-          className="w-6 h-6 text-primary-contrast"
-        />{" "}
+        <DevPodLogo aria-label="" className="w-6 h-6 text-primary-contrast" />{" "}
         DevPod
       </ButtonLink>
       {createPortal(

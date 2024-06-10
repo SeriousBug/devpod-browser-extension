@@ -1,7 +1,7 @@
 import { clsx } from "@lib/utils/clsx";
 import { WithRequired } from "@lib/utils/typeUtils/WithRequired";
 import { HTMLMotionProps, motion, useAnimate } from "framer-motion";
-import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 type ButtonStyleProps = {
   variant?: "solid" | "outline" | "link";
@@ -61,20 +61,12 @@ function useCommonProps<Type extends "a" | "button">(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onClick: async (e: any) => {
         props.onClick?.(e);
-        await animate(
-          scope.current,
-          { backgroundColor: "#FF00A6" },
-          { duration: 0.1 },
-        );
-        await animate(
-          scope.current,
-          { backgroundColor: "#DB0082" },
-          { duration: 0.1 },
-        );
+        await animate(scope.current, { opacity: 0.95 }, { duration: 0.1 });
+        await animate(scope.current, { opacity: 0.8 }, { duration: 0.1 });
       },
-      initial: { backgroundColor: "#DB0082" },
-      whileHover: { backgroundColor: "#AC0067" },
-      whileFocus: { backgroundColor: "#AC0067" },
+      initial: { opacity: 1 },
+      whileHover: { opacity: 0.8 },
+      whileFocus: { opacity: 0.8 },
       className: clsx(variantClasses(props), className, "cursor-pointer"),
       ...props,
       ref: mergeRefs(ref, scope),
@@ -96,13 +88,9 @@ Button.displayName = "Button";
 
 export const ButtonLink = forwardRef<HTMLAnchorElement, LinkProps>(
   ({ children, ...props }, ref) => {
-    const common = useCommonProps<"a">(props);
+    const common = useCommonProps<"a">(props, ref);
 
-    return (
-      <motion.a ref={ref} {...common}>
-        {children}
-      </motion.a>
-    );
+    return <motion.a {...common}>{children}</motion.a>;
   },
 );
 ButtonLink.displayName = "ButtonLink";
@@ -110,10 +98,7 @@ ButtonLink.displayName = "ButtonLink";
 export const Link = forwardRef<HTMLAnchorElement, Omit<LinkProps, "variant">>(
   ({ children, ...props }, ref) => {
     return (
-      <motion.a
-        ref={ref}
-        {...useCommonProps<"a">({ variant: "link", ...props })}
-      >
+      <motion.a {...useCommonProps<"a">({ variant: "link", ...props }, ref)}>
         {children}
       </motion.a>
     );

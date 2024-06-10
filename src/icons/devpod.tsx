@@ -1,15 +1,6 @@
-import LogoImage from "@public/icon/devpod.svg";
-import { DetailedHTMLProps, forwardRef } from "react";
+import { forwardRef } from "react";
 
-export const DevPodLogoImage = forwardRef<
-  HTMLImageElement,
-  DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>
->((props, ref) => {
-  return <img ref={ref} src={LogoImage} {...props} />;
-});
-DevPodLogoImage.displayName = "DevPodLogoImage";
-
-export const DevPodLogoIcon = forwardRef<
+export const DevPodLogo = forwardRef<
   SVGSVGElement,
   React.SVGProps<SVGSVGElement>
 >((props, ref) => {
@@ -32,4 +23,4 @@ export const DevPodLogoIcon = forwardRef<
     </svg>
   );
 });
-DevPodLogoIcon.displayName = "DevPodLogoIcon";
+DevPodLogo.displayName = "DevPodLogo";
