@@ -5,12 +5,12 @@ import { EIntegrationParseError } from "@lib/integrations/error";
 import { clsx } from "@lib/utils/clsx";
 import { PortalProps } from "@lib/utils/dom/portal";
 import { EError, ENoIntegrationError } from "@lib/utils/error";
-import { ErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";
+import { ModalErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";
 import { DevPodLogo } from "@src/icons/devpod";
 import { StrictMode } from "react";
 import { createPortal } from "react-dom";
 
-function getDevPodUrl(url: string) {
+export function getDevPodUrl(url: string) {
   try {
     const integration = getSupportedIntegration(url);
     if (!integration) {
@@ -82,9 +82,9 @@ export function CloneButton({
 }: PortalProps & { className?: string }) {
   return (
     <StrictMode>
-      <ErrorBoundaryProvider>
+      <ModalErrorBoundaryProvider>
         <CloneButtonInner className={className} portal={portal} />
-      </ErrorBoundaryProvider>
+      </ModalErrorBoundaryProvider>
     </StrictMode>
   );
 }

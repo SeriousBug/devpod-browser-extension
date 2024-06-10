@@ -4,7 +4,11 @@ import { EError } from "../utils/error";
 import { Modal } from "@lib/components/Modal";
 import { Button, Link } from "@lib/components/Button";
 
-function Fallback({ error, resetErrorBoundary }: FallbackProps) {
+function FallbackContent({
+  error,
+  resetErrorBoundary,
+  dismiss,
+}: FallbackProps & { dismiss?: () => void }) {
   const { errorEncoded, message, serialized } = useMemo(() => {
     return {
       errorEncoded: EError.encode(error),
@@ -15,22 +19,16 @@ function Fallback({ error, resetErrorBoundary }: FallbackProps) {
   const onCopy = useCallback(() => {
     navigator.clipboard.writeText(errorEncoded);
   }, [errorEncoded]);
-  const [dismissed, setDismissed] = useState(false);
-  const dismiss = useCallback(() => {
-    setDismissed(true);
-  }, []);
 
   return (
-    <Modal
-      isOpen={!dismissed}
-      onClose={dismiss}
-      className="text-text flex flex-col gap-4 max-w-[80vw] lg:max-w-2xl z-50"
-    >
+    <>
       <div className="flex flex-row w-full justify-between">
         <h2 className="font-bold text-xl">Error: {message}</h2>
-        <Button variant="outline" onClick={dismiss}>
-          X
-        </Button>
+        {dismiss ? (
+          <Button variant="outline" onClick={dismiss}>
+            X
+          </Button>
+        ) : null}
       </div>
       <p>
         Please send the following code along with a description of what you were
@@ -94,10 +92,55 @@ function Fallback({ error, resetErrorBoundary }: FallbackProps) {
       <Button variant="outline" onClick={resetErrorBoundary}>
         Retry
       </Button>
+    </>
+  );
+}
+
+function FallbackModal({ error, resetErrorBoundary }: FallbackProps) {
+  const [dismissed, setDismissed] = useState(false);
+  const dismiss = useCallback(() => {
+    setDismissed(true);
+  }, []);
+
+  return (
+    <Modal
+      isOpen={!dismissed}
+      onClose={dismiss}
+      className="text-text flex flex-col gap-4 max-w-[80vw] lg:max-w-2xl z-50"
+    >
+      <FallbackContent
+        error={error}
+        resetErrorBoundary={resetErrorBoundary}
+        dismiss={dismiss}
+      />
     </Modal>
   );
 }
 
-export function ErrorBoundaryProvider({ children }: { children: ReactNode }) {
-  return <ErrorBoundary FallbackComponent={Fallback}>{children}</ErrorBoundary>;
+function FallbackInline({ error, resetErrorBoundary }: FallbackProps) {
+  return (
+    <div className="p-8">
+      <FallbackContent error={error} resetErrorBoundary={resetErrorBoundary} />
+    </div>
+  );
+}
+
+export function InlineErrorBoundaryProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <ErrorBoundary FallbackComponent={FallbackInline}>{children}</ErrorBoundary>
+  );
+}
+
+export function ModalErrorBoundaryProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <ErrorBoundary FallbackComponent={FallbackModal}>{children}</ErrorBoundary>
+  );
 }

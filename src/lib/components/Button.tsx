@@ -67,7 +67,11 @@ function useCommonProps<Type extends "a" | "button">(
       initial: { opacity: 1 },
       whileHover: { opacity: 0.8 },
       whileFocus: { opacity: 0.8 },
-      className: clsx(variantClasses(props), className, "cursor-pointer"),
+      className: clsx(
+        variantClasses(props),
+        className,
+        "cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",
+      ),
       ...props,
       ref: mergeRefs(ref, scope),
     }),
