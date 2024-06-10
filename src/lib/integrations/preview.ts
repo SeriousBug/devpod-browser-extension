@@ -2,12 +2,13 @@ import { Integration } from "./core";
 
 /** A dummy integration just for testing and development.
  *
- * This is always supported on every page on dev, and never on production.
+ * This is always supported on every page in preview mode, and never on production.
  */
 export const Preview: Integration = {
   platform: "Github",
   supports() {
-    return NODE_ENV === "development";
+    console.log("PREVIEW", PREVIEW);
+    return !!PREVIEW;
   },
   getButtonTarget(document: Document) {
     return document.body;

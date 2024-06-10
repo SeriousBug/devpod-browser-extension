@@ -41,7 +41,7 @@ export default defineConfig({
   ],
   define: {
     APP_VERSION: JSON.stringify(pkg.version),
-    PREVIEW: JSON.stringify(process.env.PREVIEW !== '"false"'),
+    PREVIEW: JSON.stringify(process.env.PREVIEW === "true"),
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
   },
 });

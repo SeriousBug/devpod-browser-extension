@@ -1,4 +1,4 @@
-import { Button } from "@lib/components/Button";
+import { Button, Link } from "@lib/components/Button";
 import { CloneButton } from "./content/CloneButton";
 
 export function Preview() {
@@ -7,6 +7,7 @@ export function Preview() {
       <div className="m-4 bg-white p-8 rounded flex flex-col gap-4">
         <CloneButton portal={document.body} />
         <Button>Test</Button>
+        <Link href="/src/popup.html">Preview Popup</Link>
       </div>
     </div>
   );

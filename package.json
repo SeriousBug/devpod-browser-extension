@@ -1,12 +1,12 @@
 {
   "name": "clone-with-devpod-extension",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "license": "MIT",
   "scripts": {
     "dev": "vite dev",
-    "preview": "PREVIEW=false vite dev",
+    "preview": "PREVIEW=true vite dev",
     "build": "tsc && vite build"
   },
   "dependencies": {
