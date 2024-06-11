@@ -32,11 +32,12 @@ export default defineConfig({
       webExtension({
         manifest: generateManifest,
         disableAutoLaunch: false,
+        browser: process.env.BROWSER,
       }),
     process.env.NODE_ENV === "production" &&
       zipPack({
         outDir: ".",
-        outFileName: `dist-${pkg.version}.zip`,
+        outFileName: `devpod-ext-${process.env.BROWSER}-${pkg.version}.zip`,
       }),
   ],
   define: {

@@ -20,12 +20,13 @@ you to [devpod.sh/open](https://devpod.sh/open) when you click the button.
 
 ## Installation
 
-The Chrome extension store version is under review right now.
+The Chrome extension store, Edge extension store, and Firefox extension store are in review.
 
 In the meantime, you can download and load the extension in developer mode.
-Download the latest `dist-x.y.z.zip` file from the
+Download the latest `dev-ext-browser-x.y.z.zip` file from the
 [releases](https://github.com/SeriousBug/devpod-browser-extension/releases) page
-and unzip it.
+and unzip it. Download the `-chrome-` version for Chrome, Vivaldi, or Edge.
+Download `-firefox-` for Firefox.
 
 ![Screenshot of the chrome extension settings. There's a toggle labeled developer mode which is turned on, and a mouse is hovering over a button labeled Load unpacked.](./assets/loading-unpacked.png)
 
@@ -42,6 +43,20 @@ Then in the extension settings, enable developer mode and click
 - [ ] Add configurable settings
 
 Have any suggestions? [Open an issue](https://github.com/SeriousBug/devpod-browser-extension/issues) and I'll do my best to work on it.
+
+## Build
+
+To build the extension yourself, you'll need NodeJS 22 or later. Run `npm install` to install the dependencies, then `npm run build` to build the
+extension. You should get two files, `devpod-ext-chrome-x.y.z.zip` and `devpod-ext-firefox.x.y.z.zip`.
+
+## Develop
+
+Contributions are welcome! To develop the extension, using NodeJS 22 or later run `npm install`, then `npm run dev`. This will start the development server, and try to launch Chrome using a clean profile and with the extension preloaded.
+
+You can develop the extension inside a devcontainer, a devcontainer
+configuration is provided. However, the browser launch won't work and
+auto-reload also does not seem to function properly. If you can figure out these
+issues, please let me know!
 
 ## Disclaimer
 

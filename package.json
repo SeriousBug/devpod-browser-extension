@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite dev",
     "preview": "PREVIEW=true vite dev",
-    "build": "tsc && vite build"
+    "build:firefox": "tsc && BROWSER=firefox vite build",
+    "build:chrome": "tsc && BROWSER=chrome vite build",
+    "build": "npm run build:firefox && npm run build:chrome"
   },
   "dependencies": {
     "@types/chrome": "^0.0.268",

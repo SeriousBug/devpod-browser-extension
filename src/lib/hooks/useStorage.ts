@@ -1,10 +1,11 @@
 import { useCallback, useEffect } from "react";
 import useSWR from "swr";
+import Browser from "webextension-polyfill";
 
 type Key = "modal-dismissed";
 
 type Listener = Parameters<
-  typeof chrome.storage.local.onChanged.addListener
+  typeof Browser.storage.local.onChanged.addListener
 >[0];
 
 type StorageParams = {
@@ -35,7 +36,7 @@ export function useStorage<T = unknown>({
   } = useSWR(
     storageKey({ key, storageType }),
     async () => {
-      const value = await chrome.storage[storageType].get(key);
+      const value = await Browser.storage[storageType].get(key);
       return await validator(value);
     },
     {
@@ -49,7 +50,7 @@ export function useStorage<T = unknown>({
 
   const setData = useCallback(
     async (newValue: Awaited<T>) => {
-      await chrome.storage[storageType].set({ [key]: newValue });
+      await Browser.storage[storageType].set({ [key]: newValue });
       await mutate();
     },
     [key, mutate, storageType],
@@ -61,9 +62,9 @@ export function useStorage<T = unknown>({
         mutate();
       }
     };
-    chrome.storage[storageType].onChanged.addListener(listener);
+    Browser.storage[storageType].onChanged.addListener(listener);
     return () => {
-      chrome.storage[storageType].onChanged.removeListener(listener);
+      Browser.storage[storageType].onChanged.removeListener(listener);
     };
   });
 
