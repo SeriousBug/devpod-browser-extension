@@ -49,7 +49,7 @@ export const GitLab: Integration = {
   },
   getRepo({ url }) {
     const results =
-      /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
+      /^https?:[/][/][^/]+[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
         url.toString(),
       )?.groups;
     if (!results) {
@@ -101,13 +101,14 @@ export const GitLab: Integration = {
       }
       return branch;
     } else {
-      const results = /[/][^/]+[/][^/]+[/]-[/]tree[/](?<branch>[^?]+)/i.exec(
-        url.toString(),
-      )?.groups;
+      const results =
+        /^https?:[/][/][^/]+[/][^/]+[/][^/]+[/]-[/]tree[/](?<branch>[^?]+)/i.exec(
+          url.toString(),
+        )?.groups;
       if (!results) {
         throw new EGitLabParseError({
           data: {
-            url: window.location.href,
+            url: url.toString(),
             integration: "GitLab",
             cause: "no match",
             process: "branch",
