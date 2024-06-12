@@ -23,7 +23,9 @@ export class EGithubParseError extends EIntegrationParseError {
 }
 
 function isPR(url: string | URL) {
-  return /[/](?<repo>[^/]+[/][^/]+)([/]?pull[/](\d+))?/i.test(url.toString());
+  return /^https?:[/][/][^/]+[/](?<repo>[^/]+[/][^/]+)([/]?pull[/](\d+))/i.test(
+    url.toString(),
+  );
 }
 
 export const Github: Integration = {
@@ -48,7 +50,7 @@ export const Github: Integration = {
   },
   getRepo({ url }) {
     const results =
-      /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
+      /^https?:[/][/][^/]+[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
         url.toString(),
       )?.groups;
     if (!results) {
@@ -101,7 +103,7 @@ export const Github: Integration = {
       return branch;
     } else {
       const results =
-        /[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))/i.exec(
+        /^https?:[/][/][^/]+[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
           url.toString(),
         )?.groups;
       if (!results) {
