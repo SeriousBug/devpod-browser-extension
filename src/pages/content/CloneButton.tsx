@@ -1,4 +1,4 @@
-import { Button, ButtonLink } from "@lib/components/Button";
+import { Button } from "@lib/components/Button";
 import { useTooltip } from "@lib/hooks/useTooltip";
 import { getSupportedIntegration } from "@lib/integrations";
 import { EIntegrationParseError } from "@lib/integrations/error";
