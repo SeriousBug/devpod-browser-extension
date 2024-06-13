@@ -25,9 +25,10 @@ function init(attempts: number = 0) {
   if (buttonContainer && document.contains(buttonContainer)) {
     // Already initialized
     if (!isElementVisible(buttonContainer)) {
-      // Button is no longer visible, we need to try to place it again
-      buttonContainer?.remove();
-      debouncedInit();
+      // Button is no longer visible, try to move it to a new visible location
+      const integration = getSupportedIntegration(window.location.href);
+      const buttonTarget = integration?.getButtonTarget(document);
+      buttonTarget?.appendChild(buttonContainer);
     }
     return;
   }

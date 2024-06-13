@@ -103,7 +103,7 @@ export const Github: Integration = {
       return branch;
     } else {
       const results =
-        /^https?:[/][/][^/]+[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
+        /^https?:[/][/][^/]+[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))/i.exec(
           url.toString(),
         )?.groups;
       if (!results) {
