@@ -33,7 +33,7 @@ export function getDevPodUrl(url: string) {
     const { hostname, protocol } = new URL(url);
 
     const branchSuffix = branch ? `@${branch}` : "";
-    return `https://devpod.sh/open#${protocol}://${hostname}/${repo}${branchSuffix}`;
+    return `https://devpod.sh/open#${protocol}//${hostname}/${repo}${branchSuffix}`;
   } catch (error) {
     console.error(EError.serialize(error));
     throw error;
