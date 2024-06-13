@@ -28,7 +28,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    process.env.PREVIEW !== "false" &&
+    process.env.PREVIEW !== "true" &&
       webExtension({
         manifest: generateManifest,
         disableAutoLaunch: false,

@@ -1,4 +1,4 @@
-import { ButtonLink } from "@lib/components/Button";
+import { Button } from "@lib/components/Button";
 import { useTooltip } from "@lib/hooks/useTooltip";
 import { getSupportedIntegration } from "@lib/integrations";
 import { EIntegrationParseError } from "@lib/integrations/error";
@@ -7,8 +7,9 @@ import { PortalProps } from "@lib/utils/dom/portal";
 import { EError, ENoIntegrationError } from "@lib/utils/error";
 import { ModalErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";
 import { DevPodLogo } from "@src/icons/devpod";
-import { StrictMode } from "react";
+import { StrictMode, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { useErrorBoundary } from "react-error-boundary";
 
 export function getDevPodUrl(url: string) {
   try {
@@ -32,7 +33,7 @@ export function getDevPodUrl(url: string) {
     const { hostname, protocol } = new URL(url);
 
     const branchSuffix = branch ? `@${branch}` : "";
-    return `https://devpod.sh/open#${protocol}://${hostname}/${repo}${branchSuffix}`;
+    return `https://devpod.sh/open#${protocol}//${hostname}/${repo}${branchSuffix}`;
   } catch (error) {
     console.error(EError.serialize(error));
     throw error;
@@ -44,23 +45,29 @@ function CloneButtonInner({
   className,
 }: PortalProps & { className?: string }) {
   const { isHovering, bindTarget, bindTooltip } =
-    useTooltip<HTMLAnchorElement>();
+    useTooltip<HTMLButtonElement>();
+  const { showBoundary: showError } = useErrorBoundary();
 
-  const link = getDevPodUrl(window.location.href);
+  const clone = useCallback(() => {
+    try {
+      const link = getDevPodUrl(window.location.href);
+      window.open(link, "_blank", "noreferrer");
+    } catch (error) {
+      showError(error);
+    }
+  }, [showError]);
 
   return (
     <div className="flex justify-center items-center">
-      <ButtonLink
-        rel="noreferrer"
-        target="_blank"
-        href={link}
+      <Button
+        onClick={clone}
         color="primary"
         {...bindTarget}
         className={className}
       >
         <DevPodLogo aria-label="" className="w-6 h-6 text-primary-contrast" />{" "}
         DevPod
-      </ButtonLink>
+      </Button>
       {createPortal(
         <div
           className={clsx(
