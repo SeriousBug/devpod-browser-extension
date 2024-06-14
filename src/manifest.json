@@ -20,7 +20,7 @@
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"]
   },
-  "permissions": ["webNavigation", "activeTab"],
+  "permissions": ["webNavigation", "activeTab", "storage"],
   "content_scripts": [
     {
       "matches": ["https://github.com/*", "https://gitlab.com/*"],

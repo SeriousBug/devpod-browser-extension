@@ -1,6 +1,10 @@
 import { getSupportedIntegration } from "@lib/integrations";
 import { UpdateMessage } from "@lib/utils/messages";
+import { trace } from "@opentelemetry/api";
+import { ulid } from "ulidx";
 import browser from "webextension-polyfill";
+import { z } from "zod";
+import { setupObservability, span } from "./background/telemetry";
 
 browser.runtime.onInstalled.addListener((details) => {
   console.log("Extension installed:", details);

@@ -18,6 +18,9 @@ function generateManifest() {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    minify: process.env.NODE_ENV === "production" ? "esbuild" : false,
+  },
   resolve: {
     alias: {
       "@pages": path.resolve(__dirname, "src", "pages"),
@@ -44,5 +47,6 @@ export default defineConfig({
     APP_VERSION: JSON.stringify(pkg.version),
     PREVIEW: JSON.stringify(process.env.PREVIEW === "true"),
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+    BROWSER: JSON.stringify(process.env.BROWSER ?? "chrome"),
   },
 });
