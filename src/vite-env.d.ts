@@ -3,3 +3,4 @@
 declare const APP_VERSION: string;
 declare const PREVIEW: boolean;
 declare const NODE_ENV: "development" | "production";
+declare const BROWSER: "chrome" | "firefox";
