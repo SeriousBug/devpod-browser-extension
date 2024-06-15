@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
@@ -44,5 +45,14 @@ export default defineConfig({
     APP_VERSION: JSON.stringify(pkg.version),
     PREVIEW: JSON.stringify(process.env.PREVIEW === "true"),
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+  },
+  test: {
+    browser: {
+      enabled: true,
+      name: process.env.TEST_BROWSER ?? process.env.BROWSER ?? "chrome",
+      headless: !["no", "false", "n", "0", "disable", "off"].includes(
+        process.env.TEST_HEADLESS?.toLowerCase(),
+      ),
+    },
   },
 });
