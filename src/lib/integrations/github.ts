@@ -33,7 +33,7 @@ export const Github: Integration = {
   supports(url: string | URL) {
     return /^https?:[/][/]github.com[/][^/]+[/][^/]+/i.test(url.toString());
   },
-  getButtonTarget(document: Document) {
+  getButtonTarget(document) {
     const node =
       document.querySelector<HTMLElement>(".gh-header-actions") ??
       findDOMNodeByContent("Code")?.parentElement;

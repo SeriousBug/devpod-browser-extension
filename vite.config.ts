@@ -47,12 +47,6 @@ export default defineConfig({
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
   },
   test: {
-    browser: {
-      enabled: true,
-      name: process.env.TEST_BROWSER ?? process.env.BROWSER ?? "chrome",
-      headless: !["no", "false", "n", "0", "disable", "off"].includes(
-        process.env.TEST_HEADLESS?.toLowerCase(),
-      ),
-    },
+    environment: "jsdom",
   },
 });
