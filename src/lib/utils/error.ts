@@ -11,15 +11,15 @@ export type EErrorOptions<T = unknown> = {
 };
 
 export class EError<T = unknown> extends Error {
-  private _data?: T;
+  #data?: T;
   public get data(): Readonly<T> | undefined {
-    return this._data;
+    return this.#data;
   }
 
   constructor({ message, data, cause }: EErrorOptions<T>) {
     super(message, { cause });
     this.name = "EError";
-    this._data = data;
+    this.#data = data;
   }
 
   public static name(error: unknown) {
@@ -50,7 +50,7 @@ export class EError<T = unknown> extends Error {
 
       if (error instanceof EError) {
         return {
-          data: error._data,
+          data: error.#data,
           stack: error.stack,
           cause,
           ...base,

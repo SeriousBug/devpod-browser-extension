@@ -30,7 +30,7 @@ export const GitLab: Integration = {
   supports(url: string | URL) {
     return /^https?:[/][/]gitlab.com[/][^/]+[/][^/]+/i.test(url.toString());
   },
-  getButtonTarget(document: Document) {
+  getButtonTarget(document) {
     const node =
       document.querySelector<HTMLElement>(".project-code-holder")
         ?.parentElement ??
