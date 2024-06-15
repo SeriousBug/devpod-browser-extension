@@ -2,7 +2,7 @@ import { Button } from "@lib/components/Button";
 import { useTooltip } from "@lib/hooks/useTooltip";
 import { getSupportedIntegration } from "@lib/integrations";
 import { EIntegrationParseError } from "@lib/integrations/error";
-import { clsx } from "@lib/utils/clsx";
+import { clsx } from "@lib/utils/dom/clsx";
 import { PortalProps } from "@lib/utils/dom/portal";
 import { EError, ENoIntegrationError } from "@lib/utils/error";
 import { ModalErrorBoundaryProvider } from "@lib/wrappers/ErrorBoundary";

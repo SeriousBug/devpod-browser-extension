@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { stopPropagation } from "@lib/utils/dom/stopPropagation";
-import { clsx } from "@lib/utils/clsx";
+import { clsx } from "@lib/utils/dom/clsx";
 import { ReactNode, Suspense } from "react";
 
 const MODAL = "fixed left-0 top-0 bottom-0 right-0 z-20";
