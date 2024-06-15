@@ -1,4 +1,4 @@
-import { clsx } from "@lib/utils/clsx";
+import { clsx } from "@lib/utils/dom/clsx";
 import { WithRequired } from "@lib/utils/typeUtils/WithRequired";
 import { HTMLMotionProps, motion, useAnimate } from "framer-motion";
 import { forwardRef, useMemo } from "react";
