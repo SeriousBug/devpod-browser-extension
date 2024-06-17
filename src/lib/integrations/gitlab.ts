@@ -21,13 +21,22 @@ export class EGitLabParseError extends EIntegrationParseError {
   }
 }
 
-function isPR(url: string | URL) {
-  return /[/][^/]+[/][^/]+[/]-[/]merge_requests[/].+/i.test(url.toString());
+function isMergeRequestPathname(pathname: string) {
+  return /^[/][^/]+[/][^/]+[/]-[/]merge_requests[/]\d+/i.test(pathname);
 }
+
+function parseGitlabPathname(
+  pathname: string,
+): { repo?: string; branch?: string } | undefined {
+  return /^[/](?<repo>[^/]+[/][^/]+)([/]-[/]tree[/](?<branch>[^/]+))?/i.exec(
+    pathname,
+  )?.groups;
+}
+
 
 export const GitLab: Integration = {
   platform: "GitLab",
-  supports(url: string | URL) {
+  supports(url: URL) {
     return /^https?:[/][/]gitlab.com[/][^/]+[/][^/]+/i.test(url.toString());
   },
   getButtonTarget(document) {
@@ -47,86 +56,10 @@ export const GitLab: Integration = {
     }
     return node;
   },
-  getRepo({ url }) {
-    const results =
-      /^https?:[/][/][^/]+[/](?<repo>[^/]+[/][^/]+)([/]?tree[/](?<branch>[^?]+))?/i.exec(
-        url.toString(),
-      )?.groups;
-    if (!results) {
-      throw new EGitLabParseError({
-        data: {
-          url: url.toString(),
-          integration: "GitLab",
-          cause: "no match",
-          process: "repo",
-        },
-      });
-    }
-    const { repo } = results;
-    if (_.isEmpty(repo)) {
-      throw new EGitLabParseError({
-        data: {
-          url: url.toString(),
-          integration: "GitLab",
-          cause: "empty match",
-          process: "repo",
-        },
-      });
-    }
-    return repo;
-  },
-  getBranch({ url, document }) {
-    if (isPR(url)) {
-      const branchContainer = document.querySelector(".ref-container");
-      if (!branchContainer) {
-        throw new EGitLabParseError({
-          data: {
-            url: url.toString(),
-            integration: "GitLab",
-            cause: "no match",
-            process: "branch",
-          },
-        });
-      }
-      const branch = branchContainer.textContent;
-      if (!branch || _.isEmpty(branch)) {
-        throw new EGitLabParseError({
-          data: {
-            url: url.toString(),
-            integration: "GitLab",
-            cause: "empty match",
-            process: "branch",
-          },
-        });
-      }
-      return branch;
-    } else {
-      const results =
-        /^https?:[/][/][^/]+[/][^/]+[/][^/]+[/]-[/]tree[/](?<branch>[^?]+)/i.exec(
-          url.toString(),
-        )?.groups;
-      if (!results) {
-        throw new EGitLabParseError({
-          data: {
-            url: url.toString(),
-            integration: "GitLab",
-            cause: "no match",
-            process: "branch",
-          },
-        });
-      }
-      const { branch } = results;
-      if (_.isEmpty(branch)) {
-        throw new EGitLabParseError({
-          data: {
-            url: url.toString(),
-            integration: "GitLab",
-            cause: "empty match",
-            process: "branch",
-          },
-        });
-      }
-      return branch;
+  getCloneUrl({ document, url }) {
+    //
+    if (isMergeRequestPathname(url.pathname)) {
+      url = 
     }
   },
   buttonClassOverride({ url }) {
