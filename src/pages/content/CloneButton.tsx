@@ -11,16 +11,15 @@ import { StrictMode, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useErrorBoundary } from "react-error-boundary";
 
-export function getDevPodUrl(url: string) {
+export function getDevPodUrl(url: URL) {
   try {
     const integration = getSupportedIntegration(url);
     if (!integration) {
-      throw new ENoIntegrationError({ data: { url } });
+      throw new ENoIntegrationError({ data: { url: url.toString() } });
     }
-    const repo = integration.getRepo({ url, document });
-    let branch;
+    let cloneUrl: string | undefined;
     try {
-      branch = integration.getBranch({ url, document });
+      cloneUrl = integration.getCloneUrl({ url, document });
     } catch (error) {
       if (
         // "no match" errors are expected when we're on the main branch
@@ -30,10 +29,7 @@ export function getDevPodUrl(url: string) {
         throw error;
       }
     }
-    const { hostname, protocol } = new URL(url);
-
-    const branchSuffix = branch ? `@${branch}` : "";
-    return `https://devpod.sh/open#${protocol}//${hostname}/${repo}${branchSuffix}`;
+    return `https://devpod.sh/open#${cloneUrl}`;
   } catch (error) {
     console.error(EError.serialize(error));
     throw error;
@@ -50,7 +46,7 @@ function CloneButtonInner({
 
   const clone = useCallback(() => {
     try {
-      const link = getDevPodUrl(window.location.href);
+      const link = getDevPodUrl(new URL(window.location.href));
       window.open(link, "_blank", "noreferrer");
     } catch (error) {
       showError(error);
