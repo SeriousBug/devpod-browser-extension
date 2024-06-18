@@ -1,11 +1,16 @@
-# Clone with DevPod Button Browser Extension
+# Clone with DevPod Browser Extension
+
+[![chrome web store](https://img.shields.io/badge/Download-chrome_web_store-blue?logo=googlechrome)](https://chromewebstore.google.com/detail/clone-with-devpod/ampglmdkglhhmhhlhalcdafifeepllpc)
+[![Firefox Add-Ons](https://img.shields.io/badge/Download-Firefox_AddOns-blue?logo=firefoxbrowser)](https://addons.mozilla.org/en-US/firefox/addon/clone-with-devpod/)
+[![GitHub License](https://img.shields.io/github/license/seriousbug/devpod-ext)](https://github.com/SeriousBug/devpod-ext/blob/main/LICENSE.txt)
+[![Codecov](https://img.shields.io/codecov/c/github/seriousbug/devpod-ext)](https://app.codecov.io/gh/SeriousBug/devpod-ext)
 
 ![A screenshot of the Github user interface. Next to the Code button is a button labeled DevPod. Text overlaid on the screenshot says "Adds a DevPod button to repository and PR pages. Spin up a dev environment with a single click!](./assets/screenshot.png)
 
-This is a browser extension for DevPod that adds a button to clone and open a
-repository with [DevPod](https://devpod.sh). Install DevPod and this extension,
-and you'll have a convenient button to clone repositories into clean development
-environments!
+A browser extension for Chrome, Firefox, and other Chrome-based browsers that
+adds a button to clone and open a repository with [DevPod](https://devpod.sh).
+Install DevPod and this extension, and you'll have a convenient button to clone
+repositories into clean development environments!
 
 This extension does not access your repositories or collect any private
 information. It just figures out the right repository and branch name, and sends
@@ -20,9 +25,9 @@ you to [devpod.sh/open](https://devpod.sh/open) when you click the button.
 
 ## Installation
 
-The Chrome extension store, Edge extension store, and Firefox extension store are in review.
+The extension is available on the [Chrome web store](https://chromewebstore.google.com/detail/clone-with-devpod/ampglmdkglhhmhhlhalcdafifeepllpc) and [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/clone-with-devpod/)! Just click these links, and download the extension with one click.
 
-In the meantime, you can download and load the extension in developer mode.
+If you are unable to use these stores, or you want access to the latest version before it has been approved by these stores, you can download and load the extension in developer mode.
 Download the latest `dev-ext-browser-x.y.z.zip` file from the
 [releases](https://github.com/SeriousBug/devpod-browser-extension/releases) page
 and unzip it. Download the `-chrome-` version for Chrome, Vivaldi, or Edge.
@@ -35,7 +40,6 @@ Then in the extension settings, enable developer mode and click
 
 ## Roadmap
 
-- [ ] Action button support
 - [ ] Support more platforms
   - [ ] Gitea & Forgejo
   - [ ] sourcehut
