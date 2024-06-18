@@ -79,7 +79,7 @@ export const Github: Integration = {
   getButtonTarget(document) {
     const node =
       document.querySelector<HTMLElement>(".gh-header-actions") ??
-      findDOMNodeByContent("Code")?.parentElement;
+      findDOMNodeByContent("button", "Code")?.parentElement;
     if (!node) {
       throw new EIntegrationTargetError({
         message: "Unable to find button target",

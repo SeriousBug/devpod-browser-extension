@@ -47,7 +47,11 @@ function init(attempts: number = 0) {
     root.render(
       <CloneButton
         className={integration.buttonClassOverride?.({
-          url: window.location.href,
+          url: window.location,
+          document,
+        })}
+        containerClassName={integration.buttonContainerOverride?.({
+          url: window.location,
           document,
         })}
         portal={portalContainer}

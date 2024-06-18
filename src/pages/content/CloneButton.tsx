@@ -39,7 +39,8 @@ export function getDevPodUrl(url: URL) {
 function CloneButtonInner({
   portal,
   className,
-}: PortalProps & { className?: string }) {
+  containerClassName,
+}: PortalProps & { className?: string; containerClassName?: string }) {
   const { isHovering, bindTarget, bindTooltip } =
     useTooltip<HTMLButtonElement>();
   const { showBoundary: showError } = useErrorBoundary();
@@ -54,7 +55,9 @@ function CloneButtonInner({
   }, [showError]);
 
   return (
-    <div className="flex justify-center items-center">
+    <div
+      className={clsx("flex justify-center items-center", containerClassName)}
+    >
       <Button
         onClick={clone}
         color="primary"
@@ -83,11 +86,16 @@ function CloneButtonInner({
 export function CloneButton({
   portal,
   className,
-}: PortalProps & { className?: string }) {
+  containerClassName,
+}: PortalProps & { className?: string; containerClassName?: string }) {
   return (
     <StrictMode>
       <ModalErrorBoundaryProvider>
-        <CloneButtonInner className={className} portal={portal} />
+        <CloneButtonInner
+          className={className}
+          containerClassName={containerClassName}
+          portal={portal}
+        />
       </ModalErrorBoundaryProvider>
     </StrictMode>
   );

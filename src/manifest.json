@@ -23,7 +23,11 @@
   "permissions": ["webNavigation", "activeTab"],
   "content_scripts": [
     {
-      "matches": ["https://github.com/*", "https://gitlab.com/*"],
+      "matches": [
+        "https://github.com/*",
+        "https://gitlab.com/*",
+        "https://git.sr.ht/*"
+      ],
       "js": ["src/pages/Content.tsx"]
     }
   ]

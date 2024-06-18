@@ -18,7 +18,7 @@ you to [devpod.sh/open](https://devpod.sh/open) when you click the button.
 
 ## Features
 
-- Adds a DevPod button on **Github** and **GitLab**
+- Adds a DevPod button on **Github**, **GitLab**, and **sourcehut**
   - On the main repository page
   - When exploring branches
   - On PRs
@@ -42,7 +42,7 @@ Then in the extension settings, enable developer mode and click
 
 - [ ] Support more platforms
   - [ ] Gitea & Forgejo
-  - [ ] sourcehut
+    - [ ] Codeberg
   - [ ] Bitbucket
 - [ ] Add configurable settings
 
