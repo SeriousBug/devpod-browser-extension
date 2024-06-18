@@ -28,3 +28,4 @@ dist-ssr
 # Config files
 .webextrc
 .webextrc.*
+coverage
